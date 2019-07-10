@@ -9,24 +9,23 @@ import os
 from PIL import Image
 
 
-def image_to_eight_bit_greyscale(path):
-    img = Image.open(path).convert("L")
+def convert_image(path):
+    img = Image.open(path)
+    img.thumbnail((100, 100), Image.ANTIALIAS)
     return np.asarray(img)
 
 
 def load_image_dataset(path_dir):
     images = []
     labels = []
-
     for file in glob.glob(path_dir + "/*.png"):
-        img = image_to_eight_bit_greyscale(file)
+        img = convert_image(file)
         images.append(img)
 
         if "fiat" in file:
             labels.append(0)
         elif "ford" in file:
             labels.append(1)
-
     return (np.asarray(images), np.asarray(labels))
 
 
@@ -41,7 +40,7 @@ def display_images(images, labels, title="Default"):
         plt.yticks([])
         plt.grid(False)
         plt.imshow(images[i], cmap=plt.cm.binary)
-    plt.xlabel(class_names[labels[i]])
+        plt.xlabel(class_names[labels[i]])
 
 
 def main():
@@ -55,21 +54,27 @@ def main():
     train_images = train_images / 255.0
     test_images = test_images / 255.0
 
-    model = keras.Sequential(
+    model = keras.models.Sequential(
         [
-            keras.layers.Flatten(input_shape=(150, 150)),
-            keras.layers.Dense(128, activation=tf.nn.sigmoid),
-            keras.layers.Dense(16, activation=tf.nn.sigmoid),
+            keras.layers.Conv2D(
+                64, kernel_size=8, activation=tf.nn.relu, input_shape=(100, 100, 4)
+            ),
+            keras.layers.Flatten(),
+            keras.layers.Dense(320, activation=tf.nn.relu),
+            keras.layers.Dense(180, activation=tf.nn.relu),
+            keras.layers.Dropout(0.5),
+            keras.layers.Dense(60, activation=tf.nn.relu),
             keras.layers.Dense(2, activation=tf.nn.softmax),
         ]
     )
 
     sgd = keras.optimizers.SGD(lr=0.01, decay=1e-5, momentum=0.7, nesterov=True)
+
     model.compile(
         optimizer=sgd, loss="sparse_categorical_crossentropy", metrics=["accuracy"]
     )
 
-    model.fit(train_images, train_labels, epochs=200)
+    model.fit(train_images, train_labels, epochs=100)
 
     test_loss, test_acc = model.evaluate(test_images, test_labels)
     print("Test accuracy:", test_acc)
