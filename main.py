@@ -16,9 +16,13 @@ def get_windows_from_image(path):
     windows_size = [100]
     for window_size in windows_size:
         for left in range(0, width + 1):
+            if left % 10 != 0:
+                continue
             if left + window_size > width:
                 continue
             for top in range(0, height + 1):
+                if top % 10 != 0:
+                    continue
                 if left + window_size > width:
                     continue
                 windows.append((left, top, left + window_size, top + window_size))
@@ -27,6 +31,7 @@ def get_windows_from_image(path):
 
 
 def convert_image_in_memory(image):
+    image = image
     image.thumbnail((100, 100), Image.ANTIALIAS)
     return np.asarray(image)
 
@@ -84,14 +89,14 @@ def main():
     model.add(
         keras.layers.Conv2D(
             32,
-            kernel_size=5,
+            kernel_size=10,
             strides=(1, 1),
             activation="relu",
             input_shape=(100, 100, 1),
         )
     )
     model.add(keras.layers.MaxPooling2D(pool_size=2, strides=2))
-    model.add(keras.layers.Conv2D(64, kernel_size=5, activation="relu"))
+    model.add(keras.layers.Conv2D(64, kernel_size=10, activation="relu"))
     model.add(keras.layers.MaxPooling2D(pool_size=2))
     model.add(keras.layers.Flatten())
     model.add(keras.layers.Dense(1000, activation="relu"))
@@ -103,7 +108,7 @@ def main():
         optimizer=sgd, loss="sparse_categorical_crossentropy", metrics=["accuracy"]
     )
 
-    model.fit(train_arrays, train_labels, epochs=60)
+    model.fit(train_arrays, train_labels, epochs=100)
 
     test_loss, test_acc = model.evaluate(test_arrays, test_labels)
     print("Test accuracy:", test_acc)
@@ -123,23 +128,25 @@ def foo():
     model_path = os.path.dirname(os.path.realpath(__file__)) + "/data/models/model"
     model = keras.models.load_model(model_path)
 
-    image_path = os.path.dirname(os.path.realpath(__file__)) + "/data/images/image.png"
+    image_path = os.path.dirname(os.path.realpath(__file__)) + "/data/images/image.jpg"
     windows = get_windows_from_image(image_path)
 
-    image = Image.open(image_path)
-
-    output_images_path = os.path.dirname(os.path.realpath(__file__)) + "/data/images/"
+    image = Image.open(image_path).convert("L")
 
     for window in windows:
         cropped_image = image.crop(window)
         converted_image = convert_image_in_memory(cropped_image)
 
-        test_array = np.asarray([np.asarray(cropped_image)])
+        test_array = converted_image
         test_array = test_array.reshape(-1, 100, 100, 1)
         test_array = test_array / 255.0
 
-        prediction = model.predict_proba(test_array)
-        print(prediction)
+        prediction = model.predict(test_array)
+
+        if prediction[0][0] > 0.97:
+            print("Found Fiat log at ", window, prediction[0][0])
+        if prediction[0][1] > 0.97:
+            print("Found Ford logo at ", window, prediction[0][1])
 
 
 if __name__ == "__main__":
