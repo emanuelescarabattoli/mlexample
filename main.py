@@ -1,3 +1,4 @@
+import sys
 import glob
 import os
 import matplotlib.pyplot as plt
@@ -70,7 +71,7 @@ def display_images(images, labels, title="Default"):
         plt.xlabel(class_names[labels[i]])
 
 
-def main():
+def train():
     (train_images, train_labels) = load_image_dataset(
         os.path.dirname(os.path.realpath(__file__)) + "/data/train"
     )
@@ -88,15 +89,15 @@ def main():
 
     model.add(
         keras.layers.Conv2D(
-            32,
-            kernel_size=10,
+            64,
+            kernel_size=25,
             strides=(1, 1),
             activation="relu",
             input_shape=(100, 100, 1),
         )
     )
     model.add(keras.layers.MaxPooling2D(pool_size=2, strides=2))
-    model.add(keras.layers.Conv2D(64, kernel_size=10, activation="relu"))
+    model.add(keras.layers.Conv2D(32, kernel_size=10, activation="relu"))
     model.add(keras.layers.MaxPooling2D(pool_size=2))
     model.add(keras.layers.Flatten())
     model.add(keras.layers.Dense(1000, activation="relu"))
@@ -108,7 +109,7 @@ def main():
         optimizer=sgd, loss="sparse_categorical_crossentropy", metrics=["accuracy"]
     )
 
-    model.fit(train_arrays, train_labels, epochs=100)
+    model.fit(train_arrays, train_labels, epochs=50)
 
     test_loss, test_acc = model.evaluate(test_arrays, test_labels)
     print("Test accuracy:", test_acc)
@@ -124,7 +125,7 @@ def main():
     del model
 
 
-def foo():
+def explore():
     model_path = os.path.dirname(os.path.realpath(__file__)) + "/data/models/model"
     model = keras.models.load_model(model_path)
 
@@ -150,4 +151,8 @@ def foo():
 
 
 if __name__ == "__main__":
-    main()
+    arg = sys.argv[1]
+    if arg == "train":
+        train()
+    elif arg == "explore":
+        explore()
