@@ -10,7 +10,7 @@ from PIL import Image
 
 
 def convert_image(path):
-    img = Image.open(path)
+    img = Image.open(path).convert("L")
     img.thumbnail((100, 100), Image.ANTIALIAS)
     return np.asarray(img)
 
@@ -54,19 +54,26 @@ def main():
     train_images = train_images / 255.0
     test_images = test_images / 255.0
 
-    model = keras.models.Sequential(
-        [
-            keras.layers.Conv2D(
-                64, kernel_size=8, activation=tf.nn.relu, input_shape=(100, 100, 4)
-            ),
-            keras.layers.Flatten(),
-            keras.layers.Dense(320, activation=tf.nn.relu),
-            keras.layers.Dense(180, activation=tf.nn.relu),
-            keras.layers.Dropout(0.5),
-            keras.layers.Dense(60, activation=tf.nn.relu),
-            keras.layers.Dense(2, activation=tf.nn.softmax),
-        ]
+    train_arrays = train_images.reshape(-1, 100, 100, 1)
+    test_arrays = test_images.reshape(-1, 100, 100, 1)
+
+    model = keras.models.Sequential()
+
+    model.add(
+        keras.layers.Conv2D(
+            32,
+            kernel_size=5,
+            strides=(1, 1),
+            activation="relu",
+            input_shape=(100, 100, 1),
+        )
     )
+    model.add(keras.layers.MaxPooling2D(pool_size=2, strides=2))
+    model.add(keras.layers.Conv2D(64, kernel_size=5, activation="relu"))
+    model.add(keras.layers.MaxPooling2D(pool_size=2))
+    model.add(keras.layers.Flatten())
+    model.add(keras.layers.Dense(1000, activation="relu"))
+    model.add(keras.layers.Dense(2, activation="softmax"))
 
     sgd = keras.optimizers.SGD(lr=0.01, decay=1e-5, momentum=0.7, nesterov=True)
 
@@ -74,12 +81,12 @@ def main():
         optimizer=sgd, loss="sparse_categorical_crossentropy", metrics=["accuracy"]
     )
 
-    model.fit(train_images, train_labels, epochs=100)
+    model.fit(train_arrays, train_labels, epochs=100)
 
-    test_loss, test_acc = model.evaluate(test_images, test_labels)
+    test_loss, test_acc = model.evaluate(test_arrays, test_labels)
     print("Test accuracy:", test_acc)
 
-    predictions = model.predict(test_images)
+    predictions = model.predict(test_arrays)
     print(predictions)
 
     display_images(test_images, np.argmax(predictions, axis=1))
