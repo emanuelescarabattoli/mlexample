@@ -1,12 +1,34 @@
-import tensorflow as tf
-from tensorflow import keras
-
-import numpy as np
-import matplotlib.pyplot as plt
 import glob
 import os
+import matplotlib.pyplot as plt
+import numpy as np
 
+from tensorflow import keras
 from PIL import Image
+
+
+def get_windows_from_image(path):
+    image = Image.open(path)
+    width, height = image.size
+
+    windows = []
+
+    windows_size = [100]
+    for window_size in windows_size:
+        for left in range(0, width + 1):
+            if left + window_size > width:
+                continue
+            for top in range(0, height + 1):
+                if left + window_size > width:
+                    continue
+                windows.append((left, top, left + window_size, top + window_size))
+
+    return windows
+
+
+def convert_image_in_memory(image):
+    image.thumbnail((100, 100), Image.ANTIALIAS)
+    return np.asarray(image)
 
 
 def convert_image(path):
@@ -81,7 +103,7 @@ def main():
         optimizer=sgd, loss="sparse_categorical_crossentropy", metrics=["accuracy"]
     )
 
-    model.fit(train_arrays, train_labels, epochs=100)
+    model.fit(train_arrays, train_labels, epochs=60)
 
     test_loss, test_acc = model.evaluate(test_arrays, test_labels)
     print("Test accuracy:", test_acc)
@@ -91,6 +113,33 @@ def main():
 
     display_images(test_images, np.argmax(predictions, axis=1))
     plt.show()
+
+    path = os.path.dirname(os.path.realpath(__file__)) + "/data/models/model"
+    model.save(path)
+    del model
+
+
+def foo():
+    model_path = os.path.dirname(os.path.realpath(__file__)) + "/data/models/model"
+    model = keras.models.load_model(model_path)
+
+    image_path = os.path.dirname(os.path.realpath(__file__)) + "/data/images/image.png"
+    windows = get_windows_from_image(image_path)
+
+    image = Image.open(image_path)
+
+    output_images_path = os.path.dirname(os.path.realpath(__file__)) + "/data/images/"
+
+    for window in windows:
+        cropped_image = image.crop(window)
+        converted_image = convert_image_in_memory(cropped_image)
+
+        test_array = np.asarray([np.asarray(cropped_image)])
+        test_array = test_array.reshape(-1, 100, 100, 1)
+        test_array = test_array / 255.0
+
+        prediction = model.predict_proba(test_array)
+        print(prediction)
 
 
 if __name__ == "__main__":
