@@ -90,14 +90,14 @@ def train():
     model.add(
         keras.layers.Conv2D(
             64,
-            kernel_size=25,
+            kernel_size=10,
             strides=(1, 1),
             activation="relu",
             input_shape=(100, 100, 1),
         )
     )
     model.add(keras.layers.MaxPooling2D(pool_size=2, strides=2))
-    model.add(keras.layers.Conv2D(32, kernel_size=10, activation="relu"))
+    model.add(keras.layers.Conv2D(32, kernel_size=5, activation="relu"))
     model.add(keras.layers.MaxPooling2D(pool_size=2))
     model.add(keras.layers.Flatten())
     model.add(keras.layers.Dense(1000, activation="relu"))
@@ -144,10 +144,10 @@ def explore():
 
         prediction = model.predict(test_array)
 
-        if prediction[0][0] > 0.97:
-            print("Found Fiat log at ", window, prediction[0][0])
-        if prediction[0][1] > 0.97:
-            print("Found Ford logo at ", window, prediction[0][1])
+        if prediction[0][0] > 0.998:
+            print("Found Fiat logo at", window, prediction[0][0])
+        if prediction[0][1] > 0.998:
+            print("Found Ford logo at", window, prediction[0][1])
 
 
 if __name__ == "__main__":
