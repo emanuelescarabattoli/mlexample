@@ -33,20 +33,20 @@ def get_windows_from_image(path):
 
 def convert_image_in_memory(image):
     image = image
-    image.thumbnail((100, 100), Image.ANTIALIAS)
+    image.thumbnail((60, 60), Image.ANTIALIAS)
     return np.asarray(image)
 
 
 def convert_image(path):
     img = Image.open(path).convert("L")
-    img.thumbnail((100, 100), Image.ANTIALIAS)
+    img.thumbnail((60, 60), Image.ANTIALIAS)
     return np.asarray(img)
 
 
 def load_image_dataset(path_dir):
     images = []
     labels = []
-    for file in glob.glob(path_dir + "/*.png"):
+    for file in glob.glob(path_dir + "/*.jpg"):
         img = convert_image(file)
         images.append(img)
 
@@ -82,22 +82,22 @@ def train():
     train_images = train_images / 255.0
     test_images = test_images / 255.0
 
-    train_arrays = train_images.reshape(-1, 100, 100, 1)
-    test_arrays = test_images.reshape(-1, 100, 100, 1)
+    train_arrays = train_images.reshape(-1, 60, 60, 1)
+    test_arrays = test_images.reshape(-1, 60, 60, 1)
 
     model = keras.models.Sequential()
 
     model.add(
         keras.layers.Conv2D(
             64,
-            kernel_size=10,
+            kernel_size=5,
             strides=(1, 1),
             activation="relu",
-            input_shape=(100, 100, 1),
+            input_shape=(60, 60, 1),
         )
     )
     model.add(keras.layers.MaxPooling2D(pool_size=2, strides=2))
-    model.add(keras.layers.Conv2D(32, kernel_size=5, activation="relu"))
+    model.add(keras.layers.Conv2D(32, kernel_size=2, activation="relu"))
     model.add(keras.layers.MaxPooling2D(pool_size=2))
     model.add(keras.layers.Flatten())
     model.add(keras.layers.Dense(1000, activation="relu"))
@@ -139,7 +139,7 @@ def explore():
         converted_image = convert_image_in_memory(cropped_image)
 
         test_array = converted_image
-        test_array = test_array.reshape(-1, 100, 100, 1)
+        test_array = test_array.reshape(-1, 60, 60, 1)
         test_array = test_array / 255.0
 
         prediction = model.predict(test_array)
