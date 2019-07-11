@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 from tensorflow import keras
-from PIL import Image
+from PIL import Image, ImageDraw
 
 
 def get_windows_from_image(path):
@@ -14,7 +14,7 @@ def get_windows_from_image(path):
 
     windows = []
 
-    windows_size = [100]
+    windows_size = [60]
     for window_size in windows_size:
         for left in range(0, width + 1):
             if left % 10 != 0:
@@ -32,8 +32,6 @@ def get_windows_from_image(path):
 
 
 def convert_image_in_memory(image):
-    image = image
-    image.thumbnail((60, 60), Image.ANTIALIAS)
     return np.asarray(image)
 
 
@@ -89,18 +87,20 @@ def train():
 
     model.add(
         keras.layers.Conv2D(
-            64,
-            kernel_size=5,
-            strides=(1, 1),
+            128,
+            kernel_size=3,
+            strides=1,
             activation="relu",
             input_shape=(60, 60, 1),
         )
     )
+    model.add(keras.layers.MaxPooling2D(pool_size=2))
+    model.add(keras.layers.Conv2D(64, kernel_size=5, activation="relu"))
     model.add(keras.layers.MaxPooling2D(pool_size=2, strides=2))
-    model.add(keras.layers.Conv2D(32, kernel_size=2, activation="relu"))
+    model.add(keras.layers.Conv2D(128, kernel_size=2, activation="relu"))
     model.add(keras.layers.MaxPooling2D(pool_size=2))
     model.add(keras.layers.Flatten())
-    model.add(keras.layers.Dense(1000, activation="relu"))
+    model.add(keras.layers.Dense(512, activation="relu"))
     model.add(keras.layers.Dense(2, activation="softmax"))
 
     sgd = keras.optimizers.SGD(lr=0.01, decay=1e-5, momentum=0.7, nesterov=True)
@@ -109,7 +109,7 @@ def train():
         optimizer=sgd, loss="sparse_categorical_crossentropy", metrics=["accuracy"]
     )
 
-    model.fit(train_arrays, train_labels, epochs=50)
+    model.fit(train_arrays, train_labels, epochs=60)
 
     test_loss, test_acc = model.evaluate(test_arrays, test_labels)
     print("Test accuracy:", test_acc)
@@ -125,14 +125,19 @@ def train():
     del model
 
 
-def explore():
+def test():
     model_path = os.path.dirname(os.path.realpath(__file__)) + "/data/models/model"
     model = keras.models.load_model(model_path)
 
-    image_path = os.path.dirname(os.path.realpath(__file__)) + "/data/images/image.jpg"
-    windows = get_windows_from_image(image_path)
+    image_path_input = os.path.dirname(os.path.realpath(__file__)) + "/data/images/image_input.jpg"
+    image_path_output = os.path.dirname(os.path.realpath(__file__)) + "/data/images/image_output.jpg"
+    windows = get_windows_from_image(image_path_input)
 
-    image = Image.open(image_path).convert("L")
+    image = Image.open(image_path_input).convert("L")
+
+    draw = ImageDraw.Draw(image)
+
+    windows_found = []
 
     for window in windows:
         cropped_image = image.crop(window)
@@ -144,15 +149,24 @@ def explore():
 
         prediction = model.predict(test_array)
 
-        if prediction[0][0] > 0.998:
+        if prediction[0][0] > 0.99:
+            windows_found.append((window, "black"))
             print("Found Fiat logo at", window, prediction[0][0])
-        if prediction[0][1] > 0.998:
+        if prediction[0][1] > 0.99:
+            windows_found.append((window, "white"))
             print("Found Ford logo at", window, prediction[0][1])
+
+    for window_found in windows_found:
+        draw.rectangle(window_found[0], window_found[1])
+    image.save(image_path_output)
 
 
 if __name__ == "__main__":
     arg = sys.argv[1]
     if arg == "train":
         train()
-    elif arg == "explore":
-        explore()
+    elif arg == "test":
+        test()
+    elif arg == "all":
+        train()
+        test()
