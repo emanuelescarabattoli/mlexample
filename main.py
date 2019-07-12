@@ -87,11 +87,7 @@ def train():
 
     model.add(
         keras.layers.Conv2D(
-            128,
-            kernel_size=3,
-            strides=1,
-            activation="relu",
-            input_shape=(60, 60, 1),
+            128, kernel_size=3, strides=1, activation="relu", input_shape=(60, 60, 1)
         )
     )
     model.add(keras.layers.MaxPooling2D(pool_size=2))
@@ -129,8 +125,12 @@ def test():
     model_path = os.path.dirname(os.path.realpath(__file__)) + "/data/models/model"
     model = keras.models.load_model(model_path)
 
-    image_path_input = os.path.dirname(os.path.realpath(__file__)) + "/data/images/image_input.jpg"
-    image_path_output = os.path.dirname(os.path.realpath(__file__)) + "/data/images/image_output.jpg"
+    image_path_input = (
+        os.path.dirname(os.path.realpath(__file__)) + "/data/images/image_input.jpg"
+    )
+    image_path_output = (
+        os.path.dirname(os.path.realpath(__file__)) + "/data/images/image_output.jpg"
+    )
     windows = get_windows_from_image(image_path_input)
 
     image = Image.open(image_path_input).convert("L")
@@ -170,3 +170,24 @@ if __name__ == "__main__":
     elif arg == "all":
         train()
         test()
+
+
+# from skimage import io
+# from skimage import transform as tf
+
+# # Load the image as a matrix
+# image = io.imread("/home/emanuele/workspace/mlexample/data/test/fiat_aaaa.jpg")
+
+# # Create Afine transform
+# transform = tf.ProjectiveTransform(np.array([
+#     [0.34, -0.35, 21.25],
+#     [-0.3, 0.34, 18.25],
+#     [-0.005, -0.005, 1]
+# ]))
+
+# # Apply transform to image data
+# modified = tf.warp(image, transform, output_shape=(200, 200))
+
+# # Display the result
+# io.imshow(modified)
+# io.show()
