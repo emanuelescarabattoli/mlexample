@@ -3,6 +3,8 @@ import glob
 import os
 import matplotlib.pyplot as plt
 import numpy as np
+from skimage import io
+from skimage import transform
 
 from tensorflow import keras
 from PIL import Image, ImageDraw
@@ -161,6 +163,38 @@ def test():
     image.save(image_path_output)
 
 
+def generate():
+
+    image_input_path = (
+        os.path.dirname(os.path.realpath(__file__)) + "/data/train/fiat_test.jpg"
+    )
+
+
+    image_output_path = (
+        os.path.dirname(os.path.realpath(__file__)) + "/data/train/fiat_test_output.jpg"
+    )
+
+    image_input = Image.open(image_input_path)
+
+    prospective = transform.ProjectiveTransform(
+        np.array(
+            [
+                [0.62796, -0.00625, 0.375],
+                [-0.13653, 0.71634, 8.375],
+                [-0.00447, -0.00021, 1],
+            ]
+        )
+    )
+    projected = transform.warp(
+        image_input, prospective, output_shape=(70, 70), cval=0.5
+    )
+    scaled = transform.resize(projected, (65, 65))
+    cropped = scaled[0:60, 0:60]
+
+    image_output = Image.fromarray(np.asarray(cropped))
+    image_output.save(image_output_path)
+
+
 if __name__ == "__main__":
     arg = sys.argv[1]
     if arg == "train":
@@ -170,24 +204,5 @@ if __name__ == "__main__":
     elif arg == "all":
         train()
         test()
-
-
-# from skimage import io
-# from skimage import transform as tf
-
-# # Load the image as a matrix
-# image = io.imread("/home/emanuele/workspace/mlexample/data/test/fiat_aaaa.jpg")
-
-# # Create Afine transform
-# transform = tf.ProjectiveTransform(np.array([
-#     [0.34, -0.35, 21.25],
-#     [-0.3, 0.34, 18.25],
-#     [-0.005, -0.005, 1]
-# ]))
-
-# # Apply transform to image data
-# modified = tf.warp(image, transform, output_shape=(200, 200))
-
-# # Display the result
-# io.imshow(modified)
-# io.show()
+    elif arg == "generate":
+        generate()
