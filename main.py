@@ -4,12 +4,13 @@ import os
 import matplotlib.pyplot as plt
 import numpy as np
 
-# from skimage import io
-# from skimage import transform
+from skimage import io
+from skimage import transform
 
 from datetime import datetime
 from tensorflow import keras
 from PIL import Image, ImageDraw
+from matplotlib import cm
 
 
 def get_windows_from_image(path):
@@ -43,7 +44,6 @@ def convert_image(path):
     img = Image.open(path).convert("L")
     img.thumbnail((60, 60), Image.ANTIALIAS)
     return np.asarray(img)
-
 
 def load_image_dataset(path_dir):
     images = []
@@ -154,10 +154,10 @@ def test():
 
         prediction = model.predict(test_array)
 
-        if prediction[0][0] > 0.98:
+        if prediction[0][0] > 0.994:
             windows_found.append((window, "black"))
             print("Found Fiat logo at", window, prediction[0][0])
-        if prediction[0][1] > 0.98:
+        if prediction[0][1] > 0.994:
             windows_found.append((window, "white"))
             print("Found Ford logo at", window, prediction[0][1])
 
@@ -193,8 +193,7 @@ def generate():
     scaled = transform.resize(projected, (65, 65))
     cropped = scaled[0:60, 0:60]
 
-    image_output = Image.fromarray(np.asarray(cropped))
-    image_output.save(image_output_path)
+    io.imsave(image_output_path, cropped)
 
 
 if __name__ == "__main__":
