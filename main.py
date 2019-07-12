@@ -109,7 +109,7 @@ def train():
         optimizer=sgd, loss="sparse_categorical_crossentropy", metrics=["accuracy"]
     )
 
-    model.fit(train_arrays, train_labels, epochs=60)
+    model.fit(train_arrays, train_labels, epochs=70)
 
     test_loss, test_acc = model.evaluate(test_arrays, test_labels)
     print("Test accuracy:", test_acc)
@@ -154,10 +154,10 @@ def test():
 
         prediction = model.predict(test_array)
 
-        if prediction[0][0] > 0.97:
+        if prediction[0][0] > 0.98:
             windows_found.append((window, "black"))
             print("Found Fiat logo at", window, prediction[0][0])
-        if prediction[0][1] > 0.97:
+        if prediction[0][1] > 0.98:
             windows_found.append((window, "white"))
             print("Found Ford logo at", window, prediction[0][1])
 
