@@ -149,10 +149,10 @@ def test():
 
         prediction = model.predict(test_array)
 
-        if prediction[0][0] > 0.99:
+        if prediction[0][0] > 0.995:
             windows_found.append((window, "black"))
             print("Found Fiat logo at", window, prediction[0][0])
-        if prediction[0][1] > 0.99:
+        if prediction[0][1] > 0.995:
             windows_found.append((window, "white"))
             print("Found Ford logo at", window, prediction[0][1])
 
