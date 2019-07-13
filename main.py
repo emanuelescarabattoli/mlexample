@@ -92,16 +92,16 @@ def train():
 
     model.add(
         keras.layers.Conv2D(
-            32, kernel_size=3, strides=1, activation="relu", input_shape=(60, 60, 1)
+            32, kernel_size=5, strides=1, activation="relu", input_shape=(60, 60, 1)
         )
     )
-    model.add(keras.layers.MaxPooling2D(pool_size=3))
+    model.add(keras.layers.MaxPooling2D(pool_size=5))
     model.add(keras.layers.Conv2D(64, kernel_size=3, activation="relu"))
-    model.add(keras.layers.MaxPooling2D(pool_size=3, strides=2))
-    model.add(keras.layers.Conv2D(64, kernel_size=2, activation="relu"))
+    model.add(keras.layers.MaxPooling2D(pool_size=3, strides=3))
+    model.add(keras.layers.Conv2D(128, kernel_size=2, activation="relu"))
     model.add(keras.layers.MaxPooling2D(pool_size=2))
     model.add(keras.layers.Flatten())
-    model.add(keras.layers.Dense(128, activation="relu"))
+    model.add(keras.layers.Dense(512, activation="relu"))
     model.add(keras.layers.Dense(2, activation="softmax"))
 
     sgd = keras.optimizers.SGD(lr=0.01, decay=1e-5, momentum=0.7, nesterov=True)
@@ -110,7 +110,7 @@ def train():
         optimizer=sgd, loss="sparse_categorical_crossentropy", metrics=["accuracy"]
     )
 
-    model.fit(train_arrays, train_labels, epochs=70)
+    model.fit(train_arrays, train_labels, epochs=50)
 
     test_loss, test_acc = model.evaluate(test_arrays, test_labels)
     print("Test accuracy:", test_acc)
@@ -155,10 +155,10 @@ def test():
 
         prediction = model.predict(test_array)
 
-        if prediction[0][0] > 0.9999:
+        if prediction[0][0] > 0.9993:
             windows_found.append((window, "black"))
             print("Found Fiat logo at", window, prediction[0][0])
-        if prediction[0][1] > 0.9999:
+        if prediction[0][1] > 0.9993:
             windows_found.append((window, "white"))
             print("Found Ford logo at", window, prediction[0][1])
 
@@ -174,31 +174,45 @@ def generate():
 
     for file in files:
 
+        # image_output_path = (
+        #     file.replace(".jpg", "")
+        #     + "_transform_right_"
+        #     + str(datetime.now().timestamp()).replace(".", "")
+        #     + ".jpg"
+        # )
+
+        if "rotate" in file:
+            continue
+
         image_output_path = (
             file.replace(".jpg", "")
-            + "_transform_right_"
+            + "_transform_rotate_plus_10_"
             + str(datetime.now().timestamp()).replace(".", "")
             + ".jpg"
         )
 
         image_input = Image.open(file)
 
-        prospective = transform.ProjectiveTransform(
-            np.array(
-                [
-                    [0.62796, -0.00625, 0.375],
-                    [-0.13653, 0.71634, 8.375],
-                    [-0.00447, -0.00021, 1],
-                ]
-            )
-        )
-        projected = transform.warp(
-            image_input, prospective, output_shape=(70, 70), cval=0.5
-        )
-        scaled = transform.resize(projected, (65, 65))
-        cropped = scaled[0:60, 0:60]
+        # prospective = transform.ProjectiveTransform(
+        #     np.array(
+        #         [
+        #             [0.62796, -0.00625, 0.375],
+        #             [-0.13653, 0.71634, 8.375],
+        #             [-0.00447, -0.00021, 1],
+        #         ]
+        #     )
+        # )
+        # projected = transform.warp(
+        #     image_input, prospective, output_shape=(70, 70), cval=0.5
+        # )
+        # scaled = transform.resize(projected, (65, 65))
+        # cropped = scaled[0:60, 0:60]
 
-        io.imsave(image_output_path, cropped)
+        # io.imsave(image_output_path, cropped)
+
+        rotate = transform.rotate(np.asarray(image_input), 10, cval=0.5)
+
+        io.imsave(image_output_path, rotate)
 
 
 if __name__ == "__main__":
