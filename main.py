@@ -92,16 +92,16 @@ def train():
 
     model.add(
         keras.layers.Conv2D(
-            64, kernel_size=5, strides=1, activation="relu", input_shape=(60, 60, 1)
+            32, kernel_size=5, strides=1, activation="relu", input_shape=(60, 60, 1)
         )
     )
     model.add(keras.layers.MaxPooling2D(pool_size=5))
     model.add(keras.layers.Conv2D(64, kernel_size=3, strides=1, activation="relu"))
     model.add(keras.layers.MaxPooling2D(pool_size=3, strides=3))
-    model.add(keras.layers.Conv2D(128, kernel_size=2, strides=1, activation="relu"))
+    model.add(keras.layers.Conv2D(64, kernel_size=2, strides=1, activation="relu"))
     model.add(keras.layers.MaxPooling2D(pool_size=2, strides=2))
     model.add(keras.layers.Flatten())
-    model.add(keras.layers.Dense(64, activation="relu"))
+    model.add(keras.layers.Dense(128, activation="relu"))
     model.add(keras.layers.Dense(2, activation="softmax"))
 
     sgd = keras.optimizers.SGD(lr=0.01, decay=1e-5, momentum=0.7, nesterov=True)
@@ -144,7 +144,11 @@ def test():
 
     windows_found = []
 
+    time_all = datetime.now()
+
     for window in windows:
+
+        time = datetime.now()
 
         cropped_image = image.crop(window)
         converted_image = convert_image_in_memory(cropped_image)
@@ -153,14 +157,30 @@ def test():
         test_array = test_array.reshape(-1, 60, 60, 1)
         test_array = test_array / 255.0
 
+        time = datetime.now() - time
+        print("AAAA", time)
+
+        time = datetime.now()
+
         prediction = model.predict(test_array)
 
-        if prediction[0][0] > 0.9999:
+        time = datetime.now() - time
+        print("BBBB", time)
+
+        time = datetime.now()
+
+        if prediction[0][0] > 0.9995:
             windows_found.append((window, "black"))
             print("Found Fiat logo at", window, prediction[0][0])
-        if prediction[0][1] > 0.9999:
+        if prediction[0][1] > 0.9995:
             windows_found.append((window, "white"))
             print("Found Ford logo at", window, prediction[0][1])
+
+        time = datetime.now() - time
+        print("CCCC", time)
+
+    time_all = datetime.now() - time_all
+    print("XXXX", time_all)
 
     for window_found in windows_found:
         draw.rectangle(window_found[0], window_found[1])
