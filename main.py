@@ -45,6 +45,7 @@ def convert_image(path):
     img.thumbnail((60, 60), Image.ANTIALIAS)
     return np.asarray(img)
 
+
 def load_image_dataset(path_dir):
     images = []
     labels = []
@@ -154,10 +155,10 @@ def test():
 
         prediction = model.predict(test_array)
 
-        if prediction[0][0] > 0.994:
+        if prediction[0][0] > 0.9999:
             windows_found.append((window, "black"))
             print("Found Fiat logo at", window, prediction[0][0])
-        if prediction[0][1] > 0.994:
+        if prediction[0][1] > 0.9999:
             windows_found.append((window, "white"))
             print("Found Ford logo at", window, prediction[0][1])
 
@@ -168,32 +169,36 @@ def test():
 
 def generate():
 
-    image_input_path = (
-        os.path.dirname(os.path.realpath(__file__)) + "/data/train/fiat_test.jpg"
-    )
+    images_path = os.path.dirname(os.path.realpath(__file__)) + "/data/train"
+    files = glob.glob(images_path + "/*.jpg")
 
-    image_output_path = (
-        os.path.dirname(os.path.realpath(__file__)) + "/data/train/fiat_test_output.jpg"
-    )
+    for file in files:
 
-    image_input = Image.open(image_input_path)
-
-    prospective = transform.ProjectiveTransform(
-        np.array(
-            [
-                [0.62796, -0.00625, 0.375],
-                [-0.13653, 0.71634, 8.375],
-                [-0.00447, -0.00021, 1],
-            ]
+        image_output_path = (
+            file.replace(".jpg", "")
+            + "_transform_right_"
+            + str(datetime.now().timestamp()).replace(".", "")
+            + ".jpg"
         )
-    )
-    projected = transform.warp(
-        image_input, prospective, output_shape=(70, 70), cval=0.5
-    )
-    scaled = transform.resize(projected, (65, 65))
-    cropped = scaled[0:60, 0:60]
 
-    io.imsave(image_output_path, cropped)
+        image_input = Image.open(file)
+
+        prospective = transform.ProjectiveTransform(
+            np.array(
+                [
+                    [0.62796, -0.00625, 0.375],
+                    [-0.13653, 0.71634, 8.375],
+                    [-0.00447, -0.00021, 1],
+                ]
+            )
+        )
+        projected = transform.warp(
+            image_input, prospective, output_shape=(70, 70), cval=0.5
+        )
+        scaled = transform.resize(projected, (65, 65))
+        cropped = scaled[0:60, 0:60]
+
+        io.imsave(image_output_path, cropped)
 
 
 if __name__ == "__main__":
