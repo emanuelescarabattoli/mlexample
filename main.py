@@ -92,16 +92,16 @@ def train():
 
     model.add(
         keras.layers.Conv2D(
-            32, kernel_size=5, strides=1, activation="relu", input_shape=(60, 60, 1)
+            64, kernel_size=5, strides=1, activation="relu", input_shape=(60, 60, 1)
         )
     )
     model.add(keras.layers.MaxPooling2D(pool_size=5))
-    model.add(keras.layers.Conv2D(64, kernel_size=3, activation="relu"))
+    model.add(keras.layers.Conv2D(64, kernel_size=3, strides=1, activation="relu"))
     model.add(keras.layers.MaxPooling2D(pool_size=3, strides=3))
-    model.add(keras.layers.Conv2D(128, kernel_size=2, activation="relu"))
-    model.add(keras.layers.MaxPooling2D(pool_size=2))
+    model.add(keras.layers.Conv2D(128, kernel_size=2, strides=1, activation="relu"))
+    model.add(keras.layers.MaxPooling2D(pool_size=2, strides=2))
     model.add(keras.layers.Flatten())
-    model.add(keras.layers.Dense(512, activation="relu"))
+    model.add(keras.layers.Dense(64, activation="relu"))
     model.add(keras.layers.Dense(2, activation="softmax"))
 
     sgd = keras.optimizers.SGD(lr=0.01, decay=1e-5, momentum=0.7, nesterov=True)
@@ -155,10 +155,10 @@ def test():
 
         prediction = model.predict(test_array)
 
-        if prediction[0][0] > 0.9993:
+        if prediction[0][0] > 0.9999:
             windows_found.append((window, "black"))
             print("Found Fiat logo at", window, prediction[0][0])
-        if prediction[0][1] > 0.9993:
+        if prediction[0][1] > 0.9999:
             windows_found.append((window, "white"))
             print("Found Ford logo at", window, prediction[0][1])
 
