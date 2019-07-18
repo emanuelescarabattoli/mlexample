@@ -2,12 +2,12 @@ import os
 import sys
 import random
 
-import pandas as pd
-import numpy as np
+# import pandas as pd
+# import numpy as np
 
-from tensorflow import keras
-from sklearn.model_selection import train_test_split
-from sklearn.metrics import mean_absolute_error
+# from tensorflow import keras
+# from sklearn.model_selection import train_test_split
+# from sklearn.metrics import mean_absolute_error
 
 
 # Here we define the path of our data file
@@ -26,7 +26,7 @@ def generate():
     """
     # Generating first list of users
     users_first_group = []
-    for index in range(1, 1002):
+    for index in range(1, 102):
         users_first_group.append(
             {
                 "user_id": "user_a_" + str(index),
@@ -36,7 +36,7 @@ def generate():
 
     # Generating second list of users
     users_second_group = []
-    for index in range(1, 1002):
+    for index in range(1, 102):
         users_second_group.append(
             {
                 "user_id": "user_b_" + str(index),
@@ -46,7 +46,7 @@ def generate():
 
     # Generating third list of users
     users_third_group = []
-    for index in range(1, 1002):
+    for index in range(1, 102):
         users_third_group.append(
             {
                 "user_id": "user_c_" + str(index),
@@ -364,12 +364,12 @@ def generate():
     for rating in ratings:
         data_to_save += (
             "\n"
-            + rating["user_id"]
-            + rating["user_description"]
-            + rating["item_id"]
-            + rating["item_description"]
-            + rating["item_category_id"]
-            + rating["item_category_description"]
+            + rating["user_id"] + ";"
+            + rating["user_description"] + ";"
+            + rating["item_id"] + ";"
+            + rating["item_description"] + ";"
+            + rating["item_category_id"] + ";"
+            + rating["item_category_description"] + ";"
             + rating["rating_value"]
         )
 
