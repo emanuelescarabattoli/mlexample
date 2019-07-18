@@ -119,28 +119,8 @@ def train():
 
 
 def test():
-    """if __name__ == "__main__":
-    arg = sys.argv[1]
-    if arg == "train":
-        train()
-    elif arg == "test":
-        test()
-    elif arg == "all":
-        train()
-        test()
-    elif arg == "generate":
-        generate()
-    This funcif __name__ == "__main__":
-    arg = sys.argv[1]
-    if arg == "train":
-        train()
-    elif arg == "test":
-        test()
-    elif arg == "all":
-        train()
-        test()
-    elif arg == "generate":
-        generate()tion is used to test the saved model
+    """
+    this function is used to test the saved model
     """
     # Loading the saved model
     model = keras.models.load_model(MODEL_PATH)
