@@ -12,9 +12,9 @@ ipdb = "*"
 tensorflow = "*"
 matplotlib = "*"
 pillow = "*"
+pandas="*"
 numpy = "*"
 scikit-image = "*"
-pandas = "*"
 scikit-learn = "*"
 
 [requires]

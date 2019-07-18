@@ -2,12 +2,11 @@ import os
 import sys
 import random
 
-# import pandas as pd
-# import numpy as np
+import numpy as np
 
-# from tensorflow import keras
-# from sklearn.model_selection import train_test_split
-# from sklearn.metrics import mean_absolute_error
+from tensorflow import keras
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import mean_absolute_error
 
 
 # Here we define the path of our data file
@@ -17,6 +16,35 @@ PATH = os.path.dirname(os.path.realpath(__file__))
 RATINGS_PATH = PATH + "/data/items/items.csv"
 PREDICTIONS_PATH = PATH + "/data/items/predictions.csv"
 MODEL_PATH = PATH + "/data/items/items"
+
+
+def parse_csv_file(path):
+    """
+    A function to parse data from the CSV data file
+    """
+    data_loaded = ""
+    # We read all the ratings from the data file
+    with open(path, "r") as file:
+        data_loaded = file.read()
+
+    # We will generate an array all the records
+    data_parsed = []
+    lines = data_loaded.splitlines()
+    lines = lines[1:]
+    for line in lines:
+        splitted_line = line.split(";")
+        data_parsed.append({
+            user_id = splitted_line["user_id"]
+            user_description  = splitted_line["user_description"]
+            item_id = splitted_line["item_id"]
+            item_description = splitted_line["item_description"]
+            item_category_id = splitted_line["item_category_id"]
+            item_category_description = splitted_line["item_category_description"]
+            rating_value = splitted_line["rating_value"]
+        })
+
+    # Returning parsed data
+    return data_parsed
 
 
 def generate():
@@ -383,7 +411,7 @@ def train():
     """
     # We read all the ratings from the data file
     all_ratings = pd.read_csv(
-        RATINGS_PATH, sep="\t", names=["user_id", "item_id", "rating", "timestamp"]
+        RATINGS_PATH, sep=";", names=["user_id", "user_description", "item_id", "item_description", "item_category_id", "item_category_description", "rating_value"]
     )
 
     # Getting the count of users and items
