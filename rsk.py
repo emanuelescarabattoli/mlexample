@@ -136,7 +136,7 @@ def test():
     ratings = ratings["rating"]
 
     # Predicting the ratings
-    predictions = model.predict([[user_ids, item_ids]).squeeze()
+    predictions = model.predict([user_ids, item_ids]).squeeze()
 
     # Adding the predictions to the original dataset
     # to compare the real ratings with the preticted ones
