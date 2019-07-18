@@ -2,6 +2,7 @@ import os
 import sys
 import random
 
+import pandas as pd
 import numpy as np
 
 from tensorflow import keras
@@ -16,35 +17,6 @@ PATH = os.path.dirname(os.path.realpath(__file__))
 RATINGS_PATH = PATH + "/data/items/items.csv"
 PREDICTIONS_PATH = PATH + "/data/items/predictions.csv"
 MODEL_PATH = PATH + "/data/items/items"
-
-
-def parse_csv_file(path):
-    """
-    A function to parse data from the CSV data file
-    """
-    data_loaded = ""
-    # We read all the ratings from the data file
-    with open(path, "r") as file:
-        data_loaded = file.read()
-
-    # We will generate an array all the records
-    data_parsed = []
-    lines = data_loaded.splitlines()
-    lines = lines[1:]
-    for line in lines:
-        splitted_line = line.split(";")
-        data_parsed.append({
-            user_id = splitted_line["user_id"]
-            user_description  = splitted_line["user_description"]
-            item_id = splitted_line["item_id"]
-            item_description = splitted_line["item_description"]
-            item_category_id = splitted_line["item_category_id"]
-            item_category_description = splitted_line["item_category_description"]
-            rating_value = splitted_line["rating_value"]
-        })
-
-    # Returning parsed data
-    return data_parsed
 
 
 def generate():
@@ -430,13 +402,13 @@ def train():
     # used to train the model
     user_id_train = train_ratings["user_id"]
     item_id_train = train_ratings["item_id"]
-    rating_train = train_ratings["rating"]
+    rating_train = train_ratings["rating_value"]
 
     # Getting the list of user ids, items ids and ratings
     # used to test the model
     user_id_test = test_ratings["user_id"]
     item_id_test = test_ratings["item_id"]
-    rating_test = test_ratings["rating"]
+    rating_test = test_ratings["rating_value"]
 
     # Here we define the two input layer for the model:
     # starting from a list of user and items
