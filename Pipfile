@@ -14,6 +14,8 @@ matplotlib = "*"
 pillow = "*"
 numpy = "*"
 scikit-image = "*"
+pandas = "*"
+scikit-learn = "*"
 
 [requires]
 python_version = "3.6.4"
