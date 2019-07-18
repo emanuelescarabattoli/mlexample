@@ -44,8 +44,8 @@ rating_test = test_ratings["rating"]
 # starting from a list of user and items
 # we want to predict the rating that an user
 # will give to a given item
-user_input_layer = keras.layers.Input(shape=[1], name="user_input")
-item_input_layer = keras.layers.Input(shape=[1], name="item_input")
+user_input_layer = keras.layers.Input(shape=[1])
+item_input_layer = keras.layers.Input(shape=[1])
 
 # The embedding size is defined here
 # TODO: try to understand the meaning of this value
@@ -57,14 +57,12 @@ embedding_size = 11
 user_embedding_layer = keras.layers.Embedding(
     output_dim=embedding_size,
     input_dim=max_user_id + 1,
-    input_length=1,
-    name="user_embedding",
+    input_length=1
 )(user_input_layer)
 item_embedding_layer = keras.layers.Embedding(
     output_dim=embedding_size,
     input_dim=max_item_id + 1,
-    input_length=1,
-    name="item_embedding",
+    input_length=1
 )(item_input_layer)
 
 # Using the embedding layer as input of flatten layers
