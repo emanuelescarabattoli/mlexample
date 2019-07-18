@@ -80,7 +80,7 @@ def train():
     input_vectors = keras.layers.concatenate([user_flatten_layer, item_flatten_layer])
 
     # Here we dropout some values to avoid overfitting the model
-    input_vectors = keras.layers.Dropout(0.5)(input_vectors)
+    input_vectors = keras.layers.Dropout(0.2)(input_vectors)
 
     # From the result of previous layer we create the input
     # for the final layer, the output layer
@@ -98,9 +98,9 @@ def train():
     model.fit(
         [user_id_train, item_id_train],
         rating_train,
-        batch_size=64,
-        epochs=20,
-        validation_split=0.1,
+        batch_size=32,
+        epochs=40,
+        validation_split=0.2,
         shuffle=True,
         verbose=2,
     )
