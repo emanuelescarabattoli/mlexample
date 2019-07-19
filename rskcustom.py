@@ -16,7 +16,7 @@ PATH = os.path.dirname(os.path.realpath(__file__))
 RATINGS_PATH = PATH + "/data/items/items.csv"
 TEST_PATH = PATH + "/data/items/test.csv"
 PREDICTIONS_PATH = PATH + "/data/items/predictions.csv"
-MODEL_PATH = PATH + "/data/items/items"
+MODEL_PATH = PATH + "/data/models/items"
 
 
 def generate():
