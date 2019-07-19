@@ -14,6 +14,7 @@ from sklearn.metrics import mean_absolute_error
 # user gives to given items
 PATH = os.path.dirname(os.path.realpath(__file__))
 RATINGS_PATH = PATH + "/data/items/items.csv"
+TEST_PATH = PATH + "/data/items/test.csv"
 PREDICTIONS_PATH = PATH + "/data/items/predictions.csv"
 MODEL_PATH = PATH + "/data/items/items"
 
@@ -483,8 +484,8 @@ def train():
     model.fit(
         [user_id_train, item_id_train],
         rating_train,
-        batch_size=8,
-        epochs=60,
+        batch_size=32,
+        epochs=40,
         validation_split=0.2,
         shuffle=True,
         verbose=2,
@@ -545,6 +546,53 @@ def test():
     )
 
     # Saving the result as CSV file
+    compare.to_csv(TEST_PATH)
+
+
+def predict():
+    """
+    this function is used to predict items user may like
+    """
+    # Loading the saved model
+    model = keras.models.load_model(MODEL_PATH)
+
+    # We read all the ratings from the data file
+    ratings = pd.read_csv(
+        RATINGS_PATH,
+        sep=";",
+        names=[
+            "user_id",
+            "user_description",
+            "item_id",
+            "item_description",
+            "item_category_id",
+            "item_category_description",
+            "rating_value",
+        ],
+    )
+
+    # Getting the list of user ids, items ids and ratings
+    item_ids = ratings["item_id"].unique()
+    item_descriptions = ratings["item_description"].unique()
+    user_ids = pd.Series([ratings["user_id"][0]] * len(item_ids))
+    user_descriptions = pd.Series([ratings["user_description"][0]] * len(item_ids))
+
+    # Predicting the ratings
+    predictions = model.predict([user_ids, item_ids]).squeeze()
+
+    # Adding the predictions to the original dataset
+    # to compare the real ratings with the preticted ones
+    compare = pd.DataFrame(
+        {
+            "user": user_ids,
+            "user description": user_descriptions,
+            "item": item_ids,
+            "item description": item_descriptions,
+            "prediction": predictions,
+        }
+    )
+
+    # Saving the result as CSV file
     compare.to_csv(PREDICTIONS_PATH)
 
 
@@ -555,8 +603,7 @@ if __name__ == "__main__":
         train()
     elif arg == "test":
         test()
-    elif arg == "all":
-        train()
-        test()
     elif arg == "generate":
         generate()
+    elif arg == "predict":
+        predict()
