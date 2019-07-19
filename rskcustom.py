@@ -3,7 +3,6 @@ import sys
 import random
 
 import pandas as pd
-import numpy as np
 
 from tensorflow import keras
 from sklearn.model_selection import train_test_split
@@ -24,43 +23,47 @@ def generate():
     A function to generate a file containing
     simulated users, items and ratings
     """
+    # A variable used to store the last user id
+    user_id = 0
+
     # Generating first list of users
     users_first_group = []
     for index in range(1, 102):
+        user_id += 1
         users_first_group.append(
             {
-                "user_id": "user_a_" + str(index),
-                "user_description": "Samsung User #" + str(index),
+                "user_id": str(user_id),
+                "user_description": "Samsung User #" + str(user_id),
             }
         )
 
     # Generating second list of users
     users_second_group = []
     for index in range(1, 102):
+        user_id += 1
         users_second_group.append(
-            {
-                "user_id": "user_b_" + str(index),
-                "user_description": "Apple User #" + str(index),
-            }
+            {"user_id": str(user_id), "user_description": "Apple User #" + str(user_id)}
         )
 
     # Generating third list of users
     users_third_group = []
     for index in range(1, 102):
+        user_id += 1
         users_third_group.append(
-            {
-                "user_id": "user_c_" + str(index),
-                "user_description": "Asus User #" + str(index),
-            }
+            {"user_id": str(user_id), "user_description": "Asus User #" + str(user_id)}
         )
+
+    # Variable used to store the last item id
+    item_id = 0
 
     # Genrating first list of items
     items_first_group = []
     for index in range(1, 102):
+        item_id += 1
         items_first_group.append(
             {
-                "item_id": "item_a_" + str(index),
-                "item_description": "Smartphone Samsung Model #" + str(index),
+                "item_id": str(item_id),
+                "item_description": "Smartphone Samsung Model #" + str(item_id),
                 "item_category_id": "1",
                 "item_category_description": "Smartphone",
             }
@@ -69,10 +72,11 @@ def generate():
     # Genrating second list of items
     items_second_group = []
     for index in range(1, 12):
+        item_id += 1
         items_second_group.append(
             {
-                "item_id": "item_b_" + str(index),
-                "item_description": "Smartphone Apple Model #" + str(index),
+                "item_id": str(item_id),
+                "item_description": "Smartphone Apple Model #" + str(item_id),
                 "item_category_id": "1",
                 "item_category_description": "Smartphone",
             }
@@ -81,10 +85,11 @@ def generate():
     # Genrating third list of items
     items_third_group = []
     for index in range(1, 202):
+        item_id += 1
         items_third_group.append(
             {
-                "item_id": "item_c_" + str(index),
-                "item_description": "Smartphone Asus Model #" + str(index),
+                "item_id": str(item_id),
+                "item_description": "Smartphone Asus Model #" + str(item_id),
                 "item_category_id": "1",
                 "item_category_description": "Smartphone",
             }
@@ -93,11 +98,12 @@ def generate():
     # Genrating fourth list of items
     items_fourth_group = []
     for index in range(1, 52):
+        item_id += 1
         items_fourth_group.append(
             {
-                "item_id": "item_d_" + str(index),
+                "item_id": str(item_id),
                 "item_description": "Smartphone Charger For Android Model #"
-                + str(index),
+                + str(item_id),
                 "item_category_id": "2",
                 "item_category_description": "Smartphone Charger",
             }
@@ -106,10 +112,12 @@ def generate():
     # Genrating fifth list of items
     items_fifth_group = []
     for index in range(1, 22):
+        item_id += 1
         items_fifth_group.append(
             {
-                "item_id": "item_e_" + str(index),
-                "item_description": "Smartphone Charger For Apple Model #" + str(index),
+                "item_id": str(item_id),
+                "item_description": "Smartphone Charger For Apple Model #"
+                + str(item_id),
                 "item_category_id": "2",
                 "item_category_description": "Smartphone Charger",
             }
@@ -118,10 +126,11 @@ def generate():
     # Genrating sixth list of items
     items_sixth_group = []
     for index in range(1, 52):
+        item_id += 1
         items_sixth_group.append(
             {
-                "item_id": "item_f_" + str(index),
-                "item_description": "Smartphone Cover For Asus Model #" + str(index),
+                "item_id": str(item_id),
+                "item_description": "Smartphone Cover For Asus Model #" + str(item_id),
                 "item_category_id": "3",
                 "item_category_description": "Smartphone Cover",
             }
@@ -137,9 +146,9 @@ def generate():
         for item in items_first_group:
             ratings.append(
                 {
-                    "user_id": user["user_id"],
+                    "user_id": str(user["user_id"]),
                     "user_description": user["user_description"],
-                    "item_id": item["item_id"],
+                    "item_id": str(item["item_id"]),
                     "item_description": item["item_description"],
                     "item_category_id": item["item_category_id"],
                     "item_category_description": item["item_category_description"],
@@ -149,9 +158,9 @@ def generate():
         for item in items_second_group:
             ratings.append(
                 {
-                    "user_id": user["user_id"],
+                    "user_id": str(user["user_id"]),
                     "user_description": user["user_description"],
-                    "item_id": item["item_id"],
+                    "item_id": str(item["item_id"]),
                     "item_description": item["item_description"],
                     "item_category_id": item["item_category_id"],
                     "item_category_description": item["item_category_description"],
@@ -161,9 +170,9 @@ def generate():
         for item in items_third_group:
             ratings.append(
                 {
-                    "user_id": user["user_id"],
+                    "user_id": str(user["user_id"]),
                     "user_description": user["user_description"],
-                    "item_id": item["item_id"],
+                    "item_id": str(item["item_id"]),
                     "item_description": item["item_description"],
                     "item_category_id": item["item_category_id"],
                     "item_category_description": item["item_category_description"],
@@ -173,21 +182,21 @@ def generate():
         for item in items_fourth_group:
             ratings.append(
                 {
-                    "user_id": user["user_id"],
+                    "user_id": str(user["user_id"]),
                     "user_description": user["user_description"],
-                    "item_id": item["item_id"],
+                    "item_id": str(item["item_id"]),
                     "item_description": item["item_description"],
                     "item_category_id": item["item_category_id"],
                     "item_category_description": item["item_category_description"],
                     "rating_value": str(random.randint(3, 5)),
                 }
             )
-        for item in items_first_group:
+        for item in items_fifth_group:
             ratings.append(
                 {
-                    "user_id": user["user_id"],
+                    "user_id": str(user["user_id"]),
                     "user_description": user["user_description"],
-                    "item_id": item["item_id"],
+                    "item_id": str(item["item_id"]),
                     "item_description": item["item_description"],
                     "item_category_id": item["item_category_id"],
                     "item_category_description": item["item_category_description"],
@@ -197,9 +206,9 @@ def generate():
         for item in items_sixth_group:
             ratings.append(
                 {
-                    "user_id": user["user_id"],
+                    "user_id": str(user["user_id"]),
                     "user_description": user["user_description"],
-                    "item_id": item["item_id"],
+                    "item_id": str(item["item_id"]),
                     "item_description": item["item_description"],
                     "item_category_id": item["item_category_id"],
                     "item_category_description": item["item_category_description"],
@@ -213,9 +222,9 @@ def generate():
         for item in items_first_group:
             ratings.append(
                 {
-                    "user_id": user["user_id"],
+                    "user_id": str(user["user_id"]),
                     "user_description": user["user_description"],
-                    "item_id": item["item_id"],
+                    "item_id": str(item["item_id"]),
                     "item_description": item["item_description"],
                     "item_category_id": item["item_category_id"],
                     "item_category_description": item["item_category_description"],
@@ -225,9 +234,9 @@ def generate():
         for item in items_second_group:
             ratings.append(
                 {
-                    "user_id": user["user_id"],
+                    "user_id": str(user["user_id"]),
                     "user_description": user["user_description"],
-                    "item_id": item["item_id"],
+                    "item_id": str(item["item_id"]),
                     "item_description": item["item_description"],
                     "item_category_id": item["item_category_id"],
                     "item_category_description": item["item_category_description"],
@@ -237,9 +246,9 @@ def generate():
         for item in items_third_group:
             ratings.append(
                 {
-                    "user_id": user["user_id"],
+                    "user_id": str(user["user_id"]),
                     "user_description": user["user_description"],
-                    "item_id": item["item_id"],
+                    "item_id": str(item["item_id"]),
                     "item_description": item["item_description"],
                     "item_category_id": item["item_category_id"],
                     "item_category_description": item["item_category_description"],
@@ -249,21 +258,21 @@ def generate():
         for item in items_fourth_group:
             ratings.append(
                 {
-                    "user_id": user["user_id"],
+                    "user_id": str(user["user_id"]),
                     "user_description": user["user_description"],
-                    "item_id": item["item_id"],
+                    "item_id": str(item["item_id"]),
                     "item_description": item["item_description"],
                     "item_category_id": item["item_category_id"],
                     "item_category_description": item["item_category_description"],
                     "rating_value": str(random.randint(0, 1)),
                 }
             )
-        for item in items_sixth_group:
+        for item in items_fifth_group:
             ratings.append(
                 {
-                    "user_id": user["user_id"],
+                    "user_id": str(user["user_id"]),
                     "user_description": user["user_description"],
-                    "item_id": item["item_id"],
+                    "item_id": str(item["item_id"]),
                     "item_description": item["item_description"],
                     "item_category_id": item["item_category_id"],
                     "item_category_description": item["item_category_description"],
@@ -273,9 +282,9 @@ def generate():
         for item in items_sixth_group:
             ratings.append(
                 {
-                    "user_id": user["user_id"],
+                    "user_id": str(user["user_id"]),
                     "user_description": user["user_description"],
-                    "item_id": item["item_id"],
+                    "item_id": str(item["item_id"]),
                     "item_description": item["item_description"],
                     "item_category_id": item["item_category_id"],
                     "item_category_description": item["item_category_description"],
@@ -289,9 +298,9 @@ def generate():
         for item in items_first_group:
             ratings.append(
                 {
-                    "user_id": user["user_id"],
+                    "user_id": str(user["user_id"]),
                     "user_description": user["user_description"],
-                    "item_id": item["item_id"],
+                    "item_id": str(item["item_id"]),
                     "item_description": item["item_description"],
                     "item_category_id": item["item_category_id"],
                     "item_category_description": item["item_category_description"],
@@ -301,9 +310,9 @@ def generate():
         for item in items_second_group:
             ratings.append(
                 {
-                    "user_id": user["user_id"],
+                    "user_id": str(user["user_id"]),
                     "user_description": user["user_description"],
-                    "item_id": item["item_id"],
+                    "item_id": str(item["item_id"]),
                     "item_description": item["item_description"],
                     "item_category_id": item["item_category_id"],
                     "item_category_description": item["item_category_description"],
@@ -313,9 +322,9 @@ def generate():
         for item in items_third_group:
             ratings.append(
                 {
-                    "user_id": user["user_id"],
+                    "user_id": str(user["user_id"]),
                     "user_description": user["user_description"],
-                    "item_id": item["item_id"],
+                    "item_id": str(item["item_id"]),
                     "item_description": item["item_description"],
                     "item_category_id": item["item_category_id"],
                     "item_category_description": item["item_category_description"],
@@ -325,21 +334,21 @@ def generate():
         for item in items_fourth_group:
             ratings.append(
                 {
-                    "user_id": user["user_id"],
+                    "user_id": str(user["user_id"]),
                     "user_description": user["user_description"],
-                    "item_id": item["item_id"],
+                    "item_id": str(item["item_id"]),
                     "item_description": item["item_description"],
                     "item_category_id": item["item_category_id"],
                     "item_category_description": item["item_category_description"],
                     "rating_value": str(random.randint(4, 5)),
                 }
             )
-        for item in items_sixth_group:
+        for item in items_fifth_group:
             ratings.append(
                 {
-                    "user_id": user["user_id"],
+                    "user_id": str(user["user_id"]),
                     "user_description": user["user_description"],
-                    "item_id": item["item_id"],
+                    "item_id": str(item["item_id"]),
                     "item_description": item["item_description"],
                     "item_category_id": item["item_category_id"],
                     "item_category_description": item["item_category_description"],
@@ -349,9 +358,9 @@ def generate():
         for item in items_sixth_group:
             ratings.append(
                 {
-                    "user_id": user["user_id"],
+                    "user_id": str(user["user_id"]),
                     "user_description": user["user_description"],
-                    "item_id": item["item_id"],
+                    "item_id": str(item["item_id"]),
                     "item_description": item["item_description"],
                     "item_category_id": item["item_category_id"],
                     "item_category_description": item["item_category_description"],
@@ -360,17 +369,23 @@ def generate():
             )
 
     # Here we will store the content of CSV file to save
-    data_to_save = "user_id;user_description;item_id;item_description;item_category_id;item_category_description;rating_value"
+    data_to_save = ""
     for rating in ratings:
         data_to_save += (
-            "\n"
-            + rating["user_id"] + ";"
-            + rating["user_description"] + ";"
-            + rating["item_id"] + ";"
-            + rating["item_description"] + ";"
-            + rating["item_category_id"] + ";"
-            + rating["item_category_description"] + ";"
+            rating["user_id"]
+            + ";"
+            + rating["user_description"]
+            + ";"
+            + rating["item_id"]
+            + ";"
+            + rating["item_description"]
+            + ";"
+            + rating["item_category_id"]
+            + ";"
+            + rating["item_category_description"]
+            + ";"
             + rating["rating_value"]
+            + "\n"
         )
 
     with open(RATINGS_PATH, "w") as file:
@@ -383,7 +398,17 @@ def train():
     """
     # We read all the ratings from the data file
     all_ratings = pd.read_csv(
-        RATINGS_PATH, sep=";", names=["user_id", "user_description", "item_id", "item_description", "item_category_id", "item_category_description", "rating_value"]
+        RATINGS_PATH,
+        sep=";",
+        names=[
+            "user_id",
+            "user_description",
+            "item_id",
+            "item_description",
+            "item_category_id",
+            "item_category_description",
+            "rating_value",
+        ],
     )
 
     # Getting the count of users and items
@@ -444,7 +469,7 @@ def train():
 
     # From the result of previous layer we create the input
     # for the final layer, the output layer
-    x = keras.layers.Dense(128, activation="relu")(input_vectors)
+    x = keras.layers.Dense(64, activation="relu")(input_vectors)
 
     # We want to have a single output from out model,
     # so we use this layer
@@ -458,8 +483,8 @@ def train():
     model.fit(
         [user_id_train, item_id_train],
         rating_train,
-        batch_size=32,
-        epochs=40,
+        batch_size=8,
+        epochs=60,
         validation_split=0.2,
         shuffle=True,
         verbose=2,
@@ -487,13 +512,23 @@ def test():
 
     # We read all the ratings from the data file
     ratings = pd.read_csv(
-        RATINGS_PATH, sep="\t", names=["user_id", "item_id", "rating", "timestamp"]
+        RATINGS_PATH,
+        sep=";",
+        names=[
+            "user_id",
+            "user_description",
+            "item_id",
+            "item_description",
+            "item_category_id",
+            "item_category_description",
+            "rating_value",
+        ],
     )
 
     # Getting the list of user ids, items ids and ratings
     user_ids = ratings["user_id"]
     item_ids = ratings["item_id"]
-    ratings = ratings["rating"]
+    ratings = ratings["rating_value"]
 
     # Predicting the ratings
     predictions = model.predict([user_ids, item_ids]).squeeze()
